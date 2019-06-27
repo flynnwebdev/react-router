@@ -9,7 +9,8 @@ import { BrowserRouter, Route, Link } from 'react-router-dom'
 
 export default class App extends React.Component {
   state = {
-    categories: ['food', 'thoughts', 'shopping', 'other']
+    categories: ['food', 'thoughts', 'shopping', 'other'],
+    entries: []
   }
 
   // getView = () => {
@@ -25,20 +26,29 @@ export default class App extends React.Component {
   //   }
   // }
 
+  addEntry = (categoryId, content) => {
+    const newEntries = [...this.state.entries]
+    newEntries.push({ categoryId: categoryId, entry: content })
+    this.setState({
+      entries: newEntries
+    })
+  }
+
   render() {
     return (
       <div>
         <BrowserRouter>
           <div>
-            <Link to="/">Home</Link>
-            <Link to="/category">Category</Link>
-            <Link to="/entry">Entry</Link>
-            <Route exact path="/" component={HomeView} />
+            <Link to="/"><button>Home</button></Link>
+            <Link to="/category"><button>New Entry</button></Link>
+            <Route exact path="/" render={props => (
+              <HomeView categories={this.state.categories} entries={this.state.entries} />
+            )} />
             <Route exact path="/category" render={props => (
               <CategorySelectionView categories={this.state.categories} />
             )} />
             <Route exact path="/entry/new/:id" render={props => (
-              <NewEntryView {...props} categories={this.state.categories} />
+              <NewEntryView {...props} addEntry={this.addEntry} categories={this.state.categories} />
             )} />
           </div>
         </BrowserRouter>
